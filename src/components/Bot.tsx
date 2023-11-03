@@ -115,6 +115,12 @@ export const Bot = (props: BotProps & { class?: string }) => {
     let bottomSpacer: HTMLDivElement | undefined
     let botContainer: HTMLDivElement | undefined
 
+    // A trailing / will break the REST calls, trim if required.
+    let apiHost = props.apiHost
+    if (apiHost?.endsWith('/')) {
+        apiHost = apiHost.slice(0, -1)
+    }
+
     const [userInput, setUserInput] = createSignal('')
     const [loading, setLoading] = createSignal(false)
     const [sourcePopupOpen, setSourcePopupOpen] = createSignal(false)
@@ -201,7 +207,7 @@ export const Bot = (props: BotProps & { class?: string }) => {
 
         const result = await sendMessageQuery({
             chatflowid: props.chatflowid,
-            apiHost: props.apiHost,
+            apiHost: apiHost,
             body
         })
 
@@ -246,14 +252,19 @@ export const Bot = (props: BotProps & { class?: string }) => {
     createEffect(async () => {
         const { data } = await isStreamAvailableQuery({
             chatflowid: props.chatflowid,
-            apiHost: props.apiHost,
+            apiHost: apiHost,
         })
 
         if (data) {
             setIsChatFlowAvailableToStream(data?.isStreaming ?? false)
         }
 
-        const socket = socketIOClient(props.apiHost as string)
+        // If a subpath is present in the hosted URL, it must be passed along as 'path' in socket.io.
+        // Check if present, and if so set it.
+        const apiHostUrl = new URL(apiHost as string)
+        const apiHostOrigin = apiHostUrl.origin
+        const pathName = apiHostUrl.pathname?.length > 1 ? apiHostUrl.pathname + '/socket.io' : ''
+        const socket = socketIOClient(apiHostOrigin, { path: pathName })
 
         socket.on('connect', () => {
             setSocketIOClientId(socket.id)
