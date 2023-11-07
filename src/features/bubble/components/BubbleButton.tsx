@@ -7,10 +7,10 @@ type Props = ButtonTheme & {
   toggleBot: () => void;
 };
 
-const defaultButtonColor = '#3B81F6';
-const defaultIconColor = 'white';
-const defaultBottom = '20';
-const defaultRight = '20';
+const defaultButtonColor = '#007AC9'
+const defaultIconColor = 'white'
+const defaultBottom = '20'
+const defaultRight = '20'
 
 export const BubbleButton = (props: Props) => {
   return (
