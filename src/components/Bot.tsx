@@ -133,12 +133,6 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
   let bottomSpacer: HTMLDivElement | undefined;
   let botContainer: HTMLDivElement | undefined;
 
-  // A trailing / will break the REST calls, trim if required.
-  let apiHost = props.apiHost
-  if (apiHost?.endsWith('/')) {
-      apiHost = apiHost.slice(0, -1)
-  }
-
   const [userInput, setUserInput] = createSignal('');
   const [loading, setLoading] = createSignal(false);
   const [sourcePopupOpen, setSourcePopupOpen] = createSignal(false);
@@ -378,7 +372,12 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
 
     // If a subpath is present in the hosted URL, it must be passed along as 'path' in socket.io.
     // Check if present, and if so set it.
-    const apiHostUrl = new URL(props.apiHost as string)
+    // Remove trailing slash as well, if present.
+    let propApiHost = props.apiHost
+    if (propApiHost?.endsWith('/')) {
+      propApiHost = propApiHost.slice(0, -1)
+    }
+    const apiHostUrl = new URL(propApiHost as string)
     const apiHostOrigin = apiHostUrl.origin
     const pathName = apiHostUrl.pathname?.length > 1 ? apiHostUrl.pathname + '/socket.io' : ''
     const socket = socketIOClient(apiHostOrigin, { path: pathName })
