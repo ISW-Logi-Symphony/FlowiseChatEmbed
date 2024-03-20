@@ -5,7 +5,7 @@ import { BubbleParams } from '../types';
 import { Bot, BotProps } from '../../../components/Bot';
 import { getBubbleButtonSize } from '@/utils';
 
-const defaultButtonColor = '#3B81F6';
+const defaultButtonColor = '#007AC9';
 const defaultIconColor = 'white';
 
 export type BubbleProps = BotProps & BubbleParams;
